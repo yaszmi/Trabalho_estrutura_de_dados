@@ -3,7 +3,8 @@
 #include <time.h>
 #include <string.h>
 
-//////////////// Processsos de alocacao de memorias
+//////////////// Processsos de alocacao de memorias:
+///////// Processso inicial de alocação de memória dinâmica///////// 
 int* alocacao(int tamanho, int min, int max){
 int i=0;
 // Aloca memória dinamicamente para o vetor
@@ -23,6 +24,7 @@ int i=0;
     return vetor;
 }
 
+///////// Processso de alocação de memória dinâmica para as variáveis "copia"///////// 
 int* fazer_copia(int tamanho, int* vetor) {
     int* copia = (int*)malloc(tamanho * sizeof(int));
    
@@ -38,25 +40,26 @@ int* fazer_copia(int tamanho, int* vetor) {
 }
 //////////////// Processsos de alocacao de memorias
 
-//////////////// Algoritmo automatizacao das chamadas de funcoes e saida de dados
+//////////////// Algoritmo para a automatizacao das chamadas de funcoes e saida de dados ////////////////
+
 // Recebe a função de ordenação, o vetor cópia, o tamanho e o nome do algoritmo
 void exibicao(void (*algoritmo)(int*, int), int* vetor, int tamanho, const char* nome_algoritmo) {
     clock_t inicio, fim;
     double tempo_gasto;
     
-    // 1. Marca o início e roda o algoritmo passado por parâmetro
+    ///// 1. Marca o início e roda o algoritmo passado por parâmetro
     inicio = clock();
     algoritmo(vetor, tamanho);
     fim = clock();
     tempo_gasto = ((double)(fim - inicio) / CLOCKS_PER_SEC) * 1000;
     printf("Tempo de ordenacao %s: %f milissegundos\n\n", nome_algoritmo, tempo_gasto);
     
-    // 4. Libera a memória da cópia usada
+    ///// 4. Libera a memória da cópia
     free(vetor);
 }
 
-
-//////////////// Processsos de ordenacao baseados em comparaçao
+//////////////// Processsos de ordenacao baseados em comparaçao ////////////////
+//////////////// Bubble Sort:
 void bubbleSort(int* vetor, int tamanho) {
     int i, j, temp;
    
@@ -70,6 +73,7 @@ void bubbleSort(int* vetor, int tamanho) {
         }
     }
 }
+//////////////// Insert Sort:
 void insertSort(int* vetor, int tamanho){
    int i, j, aux;
     for (j = 1; j < tamanho; j++) {
@@ -83,7 +87,7 @@ void insertSort(int* vetor, int tamanho){
         vetor[i + 1] = aux;
     }
 }
-
+//////////////// Selection Sort:
 void selectionSort(int* vetor, int tamanho){
 int i, j, min_idx, aux;
    
@@ -106,6 +110,7 @@ int i, j, min_idx, aux;
         }
     }
 }
+//////////////// Merge Sort:
 void mergeSort(int* vetor, int esq, int dir) {
     if (esq < dir) {
         int meio = esq + (dir - esq) / 2;
@@ -157,14 +162,13 @@ void mergeSort(int* vetor, int esq, int dir) {
     }
 }
 
-// 2. adaptador para o Merge Sort
+//// adaptador para o Merge Sort, para se encaixar na função exibicao()
 void adaptadorMergeSort(int* vetor, int tamanho) {
     if (tamanho > 0) {
         mergeSort(vetor, 0, tamanho - 1); // ou mergeSortUnico
     }
 }
-
-
+//////////////// Quick Sort:
 void quickSort(int* vetor, int baixo, int alto) {
     if (baixo < alto) {
         // --- INÍCIO DA LÓGICA DE PARTIÇÃO (INLINE) ---
@@ -194,14 +198,14 @@ void quickSort(int* vetor, int baixo, int alto) {
         quickSort(vetor, pi + 1, alto);
     }
 }
-// Adaptador para o Quick Sort funcionar na rotina universal de exibicao
+//// adaptador para o Quick Sort, para se encaixar na função exibicao()
 void adaptadorQuickSort(int* vetor, int tamanho) {
     if (tamanho > 0) {
         // Chama a sua função passando 0 como 'baixo' e tamanho-1 como 'alto'
         quickSort(vetor, 0, tamanho - 1);
     }
 }
-/////////// Algoritmo Heap Sort (duas funções)
+//////////////// Quick Sort (duas funções):
 
 // 1. Função auxiliar que organiza a "árvore" (Max-Heap)
 void heapify(int* vetor, int tamanho, int i) {
@@ -251,7 +255,7 @@ void heapSort(int* vetor, int tamanho) {
         heapify(vetor, i, 0);
     }
 }
-/////////// Algoritmo Counting Sort
+//////////////// Counting Sort:
 void countingSort(int* vetor, int tamanho) {
     // Se o vetor tiver 1 ou 0 elementos, já está ordenado
     if (tamanho <= 1) return; 
@@ -308,11 +312,8 @@ void countingSort(int* vetor, int tamanho) {
     free(contagem);
     free(saida);
 }
-/////////// Fim Counting Sort
-
-/////////// Algoritmo Radix Sort
-
-// 1. Função auxiliar: Um mini-Counting Sort focado apenas em uma casa decimal (0 a 9)
+//////////////// Radix Sort:
+// 1. Função auxiliar: focado apenas em uma casa decimal (0 a 9)
 void countingSortParaRadix(int* vetor, int tamanho, int exp) {
     int* saida = (int*)malloc(tamanho * sizeof(int));
     int contagem[10] = {0}; // Só precisamos de 10 posições (dígitos de 0 a 9)
@@ -373,10 +374,7 @@ void radixSort(int* vetor, int tamanho) {
         for (i = 0; i < tamanho; i++) vetor[i] += min;
     }
 }
-/////////// Fim Radix Sort
-
-/////////// Algoritmo Bucket Sort
-
+//////////////// Bucket Sort:
 // 1. Estrutura para representar cada Balde
 typedef struct {
     int qtd;           // Quantidade atual de elementos no balde
@@ -461,14 +459,14 @@ void bucketSort(int* vetor, int tamanho) {
     // Libera o vetor de estruturas de baldes
     free(baldes);
 }
-/////////// Fim Bucket Sort
+/////////// Fim
 
 int main(){
 srand(time(NULL)); /////permite que se eu rodar o progama dnv nao gere os mesmos numeros aleatorios
 ///// Variáveis para armazenar o tempo
     clock_t inicio, fim;
     double tempo_gasto;
-    //////
+	
 int tamanho,min,max;
 int i=0;
 
@@ -486,71 +484,53 @@ int* vetor_original= alocacao(tamanho,min,max);
 
 if (vetor_original != NULL) {
  
- ////////////////INICIO BUBBLESORT
+ ////////INICIO BUBBLESORT:
         int* copia_bubble=fazer_copia(tamanho, vetor_original);
         if (copia_bubble != NULL) {
         exibicao(bubbleSort, copia_bubble, tamanho, "Bubble Sort");
 }
-////////////////FIM BUBBLESORT
-
-////////////////INICIO INSERT
+ ////////INICIO INSERTSORT:
  int* copia_insert=fazer_copia(tamanho, vetor_original);
         if (copia_insert != NULL) {
         exibicao(insertSort, copia_insert, tamanho, "Insert Sort");
 }
-////////////////FIM INSERT
-
-////////////////INICIO SELECTION
+ ////////INICIO SELECTIONSORT:
   int* copia_selection=fazer_copia(tamanho, vetor_original);
   if(copia_selection!=NULL){
   	exibicao(selectionSort, copia_selection, tamanho, "Selection Sort");
-  }
-
-
-	////////////////INICIO MERGE
+}
+ ////////INICIO MERGESORT:
 	 int* copia_merge = fazer_copia(tamanho, vetor_original);
-        if (copia_merge != NULL) exibicao(adaptadorMergeSort, copia_merge, tamanho, "Merge Sort");
-    ////////////////FIM MERGE
-
-////////////////INICIO QUICK
-	 // Teste do Quick Sort
-	 
+        if (copia_merge != NULL) {
+			exibicao(adaptadorMergeSort, copia_merge, tamanho, "Merge Sort");
+}
+ ////////INICIO QUICKSORT:
     int* copia_quick = fazer_copia(tamanho, vetor_original);
     if (copia_quick != NULL) {
         exibicao(adaptadorQuickSort, copia_quick, tamanho, "Quick Sort");
-    }
-        ////////////////FIM QUICK
-
-    ////////////////INICIO HEAP
+}
+ ////////INICIO HEAPSORT:
     	 int* copia_heap=fazer_copia(tamanho, vetor_original);
     	  if(copia_selection!=NULL){
   	exibicao(heapSort, copia_heap, tamanho, "Heap Sort");
-  }
-    ////////////////FIM QUICK
-    
-    ////////////////INICIO COUNTING
+}
+ ////////INICIO COUNTINGSORT:
         int* copia_counting = fazer_copia(tamanho, vetor_original);
         if (copia_counting != NULL) {
             exibicao(countingSort, copia_counting, tamanho, "Counting Sort");
-        }
-    ////////////////FIM COUNTING
 }
-////////////////INICIO RADIX LSD
-// Teste do Radix Sort
+ ////////INICIO RADIXSORT (LSD):
         int* copia_radix = fazer_copia(tamanho, vetor_original);
         if (copia_radix != NULL) {
             exibicao(radixSort, copia_radix, tamanho, "Radix Sort");
-        }
-////////////////FIM RADIX LSD
-
-////////////////INICIO BUCKET
+}
+ ////////INICIO BUCKETSORT:
 // Teste do Bucket Sort
         int* copia_bucket = fazer_copia(tamanho, vetor_original);
         if (copia_bucket != NULL) {
             exibicao(bucketSort, copia_bucket, tamanho, "Bucket Sort");
         }
-    ////////////////FIM BUCKET
-     ////liberacao da memoria do vetor original
+////liberacao da memoria do vetor original
         free(vetor_original);
         return 0;
 }
